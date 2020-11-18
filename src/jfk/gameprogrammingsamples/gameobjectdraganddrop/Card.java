@@ -3,6 +3,7 @@ package jfk.gameprogrammingsamples.gameobjectdraganddrop;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+// a simple sprite which can draw itself to a Graphics object and supports dragging
 public class Card implements Draggable {
 
 	public enum Suit {Hearts(0), Diamonds(1), Spades(2), Clubs(3);
@@ -11,12 +12,12 @@ public class Card implements Draggable {
 		public int getValue() {return value;}
 	}
 	
-private int width = 72;
-private int height = 96;
+	private int width = 72;
+	private int height = 96;
 	private int value;
 	private Suit suit;
 	private Point position;
-	private BufferedImage spriteMap;
+	private Image spriteMap;
 	
 	public int getWidth() {
 		return width;
@@ -58,15 +59,15 @@ private int height = 96;
 		this.position = position;
 	}
 
-	public BufferedImage getImage() {
+	public Image getImage() {
 		return spriteMap;
 	}
 
-	public void setImage(BufferedImage spriteMap) {
+	public void setImage(Image spriteMap) {
 		this.spriteMap = spriteMap;
 	}
 
-	public Card(Suit suit, int value, BufferedImage spriteMap) {
+	public Card(Suit suit, int value, Image spriteMap) {
 		super();
 		this.setSuit(suit);
 		this.setValue(value);
@@ -83,7 +84,6 @@ private int height = 96;
 	public void move(int xMovement, int yMovement) {
 		this.setPosition(new Point(getPosition().x + xMovement, getPosition().y + yMovement));
 	}
-	
 	
 	
 	public void draw(Graphics g){

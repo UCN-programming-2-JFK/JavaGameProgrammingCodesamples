@@ -12,23 +12,25 @@ import javax.swing.*;
 public class DynamicMapVisualizationPanel extends JPanel implements MouseMotionListener, MouseListener {
 
 	// Private variables
-	static int rows = 8, columns = 12; // set map size as number of rows and columns
-	static int tileSize = 64; // store the size of tiles
-	static int windowWidth = columns * tileSize + 16, // calculate the total window size and add pixels for top bar and Window border
+	static int rows = 8, columns = 12; 							// set map size as number of rows and columns
+	static int tileSize = 64; 									// store the size of tiles in pixels
+	static int windowWidth = columns * tileSize + 16,			 // calculate the total window size and add pixels for top bar and Window border
 			windowHeight = rows * tileSize + 40;
 	
-	static Color waterColor = new Color(43, 158, 232);	//store the water color for filling the frame when painting
-	static Color grassColor = new Color(139, 181, 74);	//store the water color for filling the frame when painting
+	static Color waterColor = new Color(43, 158, 232);			//store the water color for filling the frame when painting islands
+	static Color grassColor = new Color(139, 181, 74);			//store the grass color for filling the frame when painting roads
 	
-	static int[][] map = new int[columns][rows];			//the map (stores 0 for water and 1 for land)
-	static int[][] mapTileIndex = new int[columns][rows];	//the value of the tile sheet index to use for each square in the map, based on the four neighbor tiles 
+	static int[][] map = new int[columns][rows];				//the map (stores 0 for empty and 1 for content)
+	static int[][] mapTileIndex = new int[columns][rows];		//the value of the sprite sheet index to use for each square in the map, based on the four neighbor tiles 
 	
-	BufferedImage landTileSheet, roadTileSheet, currentTileSheet; 		// the tile sheets with all 16 different combinations of land or roads in the four compass directions
+	Image landSpriteSheet, roadSpriteSheet; 						// the two sprite sheets with all 16 different combinations of land or roads in the four compass directions
+	Image currentSpriteSheet; 									//stores which of the two sprite sheets to use when drawing 
 	
 	//stores state
-	Point currentMouseSquare = new Point();
-	static int mouseButtonCurrentlyPressed = 0;			//stores what mouse button is pressed (0 = none, 1 = left, 3 = right)
+	Point currentMouseSquare = new Point();						//stores the column and row of the tile that the mouse is currently over
+	static int mouseButtonCurrentlyPressed = 0;					//stores what mouse button is pressed (0 = none, 1 = left, 3 = right)
 
+	
 	
 	public static void main(String[] args) {
 
@@ -44,35 +46,33 @@ public class DynamicMapVisualizationPanel extends JPanel implements MouseMotionL
 		frame.setResizable(false); 									// lock its size
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 		// set the X button click to close the window
 		frame.setSize(windowWidth, windowHeight); 					// set the size depending on the desired number of columns and rows
-		frame.getContentPane().add(examplePanel); 					// add our border tiling panel
+		frame.getContentPane().add(examplePanel); 					// add our panel
 		frame.setVisible(true); 									// show the window
 	}
 
 	public DynamicMapVisualizationPanel() {
-		// load the pngs with the sprite sheet from the resources folder
-		landTileSheet = loadImage("/landwatertiles.png"); 		
-		roadTileSheet = loadImage("/roadTileMap_striped.png"); 
-		currentTileSheet = landTileSheet;	//set up for drawing land/sea initially
+		// load the PNGs with the sprite sheets from the resources folder
+		landSpriteSheet = loadImage("/landwatertiles.png"); 		
+		roadSpriteSheet = loadImage("/roadTileMap_striped.png"); 
+		currentSpriteSheet = landSpriteSheet;	//set up for initially drawing land/sea 
 	}
 
 	public void paint(Graphics g) {
 
-		if(currentTileSheet == landTileSheet) {
-			//fill the entire panel with background
-			g.setColor(waterColor);
+		if(currentSpriteSheet == landSpriteSheet) {
+			g.setColor(waterColor);		//fill the entire panel with water
 		}
 		else {
-			//fill the entire panel with grass
-			g.setColor(grassColor);
+			g.setColor(grassColor);		//fill the entire panel with grass
 		}
 		
-		g.fillRect(0, 0, getWidth(), getHeight());
+		g.fillRect(0, 0, getWidth(), getHeight());	//fill the background
 
 		// for each column and row
 		for (int columnCounter = 0; columnCounter < map.length; columnCounter++) {
 			for (int rowCounter = 0; rowCounter < map[0].length; rowCounter++) {
 				if (map[columnCounter][rowCounter] > 0) {
-					//if we need something else than background (the square has a value above zero), we draw from the tilesheet
+					//if we need something else than background (i.e. the square has a value above zero), we draw from the sprite sheet
 					drawCorrectTileSheetAreaToScreen(g, columnCounter, rowCounter);
 				}
 			}
@@ -80,13 +80,13 @@ public class DynamicMapVisualizationPanel extends JPanel implements MouseMotionL
 		g.setColor(Color.gray);
 		g.drawRect(currentMouseSquare.x * tileSize, currentMouseSquare.y * tileSize, tileSize, tileSize);
 		g.setColor(Color.black);
-		g.drawString("Left click draws. Right click erases. Middle mouse click toggles land/roads", 9, 21);
+		g.drawString("Left click draws. Right click erases. Middle mouse click toggles sprite sheet", 9, 21);
 		g.setColor(Color.white);
-		g.drawString("Left click draws. Right click erases. Middle mouse click toggles land/roads", 10, 20);
+		g.drawString("Left click draws. Right click erases. Middle mouse click toggles sprite sheet", 10, 20);
 	}
 
 	//this function calculates where to draw on the screen 
-	//and where to find the area to draw from on the tilesheet, based on the column, row, tileSize and the tile's map value
+	//and where to find the area to draw from on the sprite sheet, based on the column, row, tileSize and the tile's map value
 	private void drawCorrectTileSheetAreaToScreen(Graphics g, int column, int row) {
 
 		// we find top left and bottom right corner of the destination rectangle we want
@@ -101,19 +101,19 @@ public class DynamicMapVisualizationPanel extends JPanel implements MouseMotionL
 		Point imageSourceBottomRightCorner = new Point(imageSourceTopLeftCorner.x + tileSize,
 				imageSourceTopLeftCorner.y + tileSize);
 
-		// we draw from the source rectangle in the tile sheet to the destination rectangle on screen
-		g.drawImage(currentTileSheet, drawDestinationTopLeftCorner.x, drawDestinationTopLeftCorner.y,
+		// we draw from the source rectangle in the sprite sheet to the destination rectangle on screen
+		g.drawImage(currentSpriteSheet, drawDestinationTopLeftCorner.x, drawDestinationTopLeftCorner.y,
 				drawDestinationBottomRightCorner.x, drawDestinationBottomRightCorner.y, imageSourceTopLeftCorner.x,
 				imageSourceTopLeftCorner.y, imageSourceBottomRightCorner.x, imageSourceBottomRightCorner.y, null);
 	}
 	
-	//calculates what map square we are in by dividing the mouse coordinates with the tile size
-	private Point calculateMapsquareFromPoint(Point mousePoint) {
+	//calculates what map square the mouse is in, by dividing the mouse coordinates with the tile size
+	private Point calculateMapTileFromPoint(Point mousePoint) {
 		Point currentMousePosition = mousePoint;
 		return new Point((int) (currentMousePosition.getX() / tileSize), (int) (currentMousePosition.getY() / tileSize));
 	}
 
-	private void updateMapSquare(Point mapSquare) {
+	private void updateMapTile(Point mapSquare) {
 		
 		//don't do anything, if this square is off the map
 		if(!isWithinMap(mapSquare)) {return;}
@@ -171,24 +171,22 @@ public class DynamicMapVisualizationPanel extends JPanel implements MouseMotionL
 	{
 		return isWithinMap(square.x, square.y);
 	}
-
+	
+	
+	//if the mouse button is pressed on a tile, update the values in the neighbor tiles
 	@Override
 	public void mousePressed(MouseEvent arg0) {
 		mouseButtonCurrentlyPressed = arg0.getButton();
-		Point mapSquare = calculateMapsquareFromPoint(arg0.getPoint());
-		updateMapSquare(mapSquare);
+		Point mapTile = calculateMapTileFromPoint(arg0.getPoint());
+		updateMapTile(mapTile);
 		if(arg0.getButton() == MouseEvent.BUTTON2) {
 			toggleTilesheet();
 		}
 	}
 	
 	private void toggleTilesheet() {
-		if(currentTileSheet == landTileSheet) {
-			currentTileSheet = roadTileSheet;
-		}
-		else {
-			currentTileSheet = landTileSheet;
-		}
+		if(currentSpriteSheet == landSpriteSheet) { currentSpriteSheet = roadSpriteSheet; }
+		else { currentSpriteSheet = landSpriteSheet; }
 		repaint();
 	}
 
@@ -199,16 +197,17 @@ public class DynamicMapVisualizationPanel extends JPanel implements MouseMotionL
 
 	@Override
 	public void mouseDragged(MouseEvent arg0) {
-		currentMouseSquare = calculateMapsquareFromPoint(arg0.getPoint());
-		updateMapSquare(currentMouseSquare);
+		currentMouseSquare = calculateMapTileFromPoint(arg0.getPoint());
+		updateMapTile(currentMouseSquare);
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
-		currentMouseSquare = calculateMapsquareFromPoint(arg0.getPoint());
-		updateMapSquare(currentMouseSquare);
+		currentMouseSquare = calculateMapTileFromPoint(arg0.getPoint());
+		updateMapTile(currentMouseSquare);
 		}	
 	
+	//empty interface implementations
 	@Override
 	public void mouseClicked(MouseEvent arg0) {}
 	@Override

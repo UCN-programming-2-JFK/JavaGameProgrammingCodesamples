@@ -10,21 +10,25 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+// code sample showing what is needed to support drag and drop in Java
+// the code is refactored into working via the interface Draggable, to visualize what the bare minimum is for an object to support dragging.
+
 public class DragAndDropPanel extends JPanel implements MouseMotionListener, MouseListener{
 
-	BufferedImage cardTileSheet = null;
+	Image cardTileSheet = null;
 	ArrayList<Draggable> draggableObjects = new ArrayList<Draggable>();
 	static int windowWidth = 800, windowHeight = 600;
 	Draggable currentlySelectedItem = null;
 	Point lastMousePosition = new Point();
-	Color background = new Color(0,96, 0);
-	Font font = new Font("Arial",0, 24);
+	Color backgroundColor = new Color(0,96, 0);
+	Font font = new Font("Arial", Font.PLAIN, 24);
 	
 	public DragAndDropPanel() {
 		cardTileSheet = loadImage("/cards.png"); // load the png with the card sprite sheet from the resources folder
 		createAndArrangeCards();
 	}
 
+	//instantiates and arranges all 52 card objects
 	private void createAndArrangeCards() {
 		for(Card.Suit suit : Card.Suit.values()) {
 			for (int i = 1; i <= 13; i++) {
@@ -45,17 +49,18 @@ public class DragAndDropPanel extends JPanel implements MouseMotionListener, Mou
 		frame.setResizable(false); 									// lock its size
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 		// set the X button click to close the window
 		frame.setSize(windowWidth, windowHeight); 					// set the size depending on the desired number of columns and rows
-		frame.getContentPane().add(examplePanel); 					// add our border tiling panel
+		frame.getContentPane().add(examplePanel); 					// add our drag and drop panel
 		frame.setVisible(true); 									// show the window
 	}
 	
 	public void paint(Graphics g) {
-		Graphics2D g2 = (Graphics2D)g;	//cast Graphics to Graphics2D, to be able to set antialiasing, etc.
+		Graphics2D g2 = (Graphics2D)g;	//cast Graphics to Graphics2D, to be able to set anti-aliasing, etc.
 	    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 	    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 	    g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+	    
 	    //fill the background
-		g.setColor(background);
+		g.setColor(backgroundColor);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		
 		//draw all cards
@@ -89,7 +94,7 @@ public class DragAndDropPanel extends JPanel implements MouseMotionListener, Mou
 	}
 
 	private Draggable findItemAt(Point point) {
-		//look through all items (from top to bottom) and see if we hit one
+		//look through all items (from top to bottom) and see if we hit one of them
 		for (int i = draggableObjects.size() -1; i >= 0 ; i--) {
 			if(draggableObjects.get(i).contains(lastMousePosition)) {			
 				return draggableObjects.get(i);
@@ -98,11 +103,11 @@ public class DragAndDropPanel extends JPanel implements MouseMotionListener, Mou
 		return null;
 	}
 	
+	//moves selected item to top of ArrayList, to ensure it is drawn last and therefore appears over all the other cards
 	private void selectItemAndMoveToTop(Draggable item){
 		draggableObjects.remove(item);	//remove the item from the list
 		draggableObjects.add(item);		//move it to the top
-		currentlySelectedItem = item;	//remember that this is the item we've got selected now
-		
+		currentlySelectedItem = item;	//remember that this is the item we've got selected now	
 	}
 
 	@Override
@@ -125,8 +130,8 @@ public class DragAndDropPanel extends JPanel implements MouseMotionListener, Mou
 		lastMousePosition = arg0.getPoint();	//remember where the mouse is at
 	}
 	
-	private BufferedImage loadImage(String imagePathOrUrl) {
-		BufferedImage image = null;
+	private Image loadImage(String imagePathOrUrl) {
+		Image image = null;
 		try {
 			image = ImageIO.read(this.getClass().getResource(imagePathOrUrl));
 		} catch (IOException e) {
@@ -138,7 +143,9 @@ public class DragAndDropPanel extends JPanel implements MouseMotionListener, Mou
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
 		lastMousePosition = arg0.getPoint();
-		repaint();}
+		repaint();
+		}
+	
 	@Override
 	public void mouseClicked(MouseEvent arg0) {}
 	@Override

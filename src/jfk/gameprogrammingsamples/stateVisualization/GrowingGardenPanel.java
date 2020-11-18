@@ -36,13 +36,13 @@ public class GrowingGardenPanel extends JPanel implements MouseMotionListener {
 		frame.setResizable(false);									//lock its size
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		//set the X button to close the window
 		frame.setSize(windowWidthInPixels, windowHeightInPixels);	//set the size depending on the desired number of columns and rows
-		frame.getContentPane().add(examplePanel);					//add our bush-panel
+		frame.getContentPane().add(examplePanel);					//add our panel
 		frame.setVisible(true);										//show the window
 	}
 	
 
 	public GrowingGardenPanel() {
-		bushSpriteSheet = loadImage("/bush.png");		//load the png with the sprite sheet from the resources folder
+		bushSpriteSheet = loadImage("/bush.png");					//load the png with the sprite sheet from the resources folder
 	}
 
 	public void paint(Graphics g) {
@@ -82,11 +82,6 @@ public class GrowingGardenPanel extends JPanel implements MouseMotionListener {
 	}
 
 	@Override
-	public void mouseDragged(MouseEvent arg0) {	
-		// TODO Auto-generated method stub
-	}
-
-	@Override
 	public void mouseMoved(MouseEvent arg0) {
 		
 		calculateCurrentMouseSquare(arg0.getPoint());
@@ -107,19 +102,24 @@ public class GrowingGardenPanel extends JPanel implements MouseMotionListener {
 	}
 
 	private void growPlantInSquareByOneSize(int x, int y) {
-		if (bushStates[x][y] < 4) {	//ensure we stop at the final state (4)
+		//grow current square one step, but ensure we stop at the final state (4)
+		if (bushStates[x][y] < 4) {	
 			bushStates[x][y]++;
 			System.out.println("Value is now: " + bushStates[x][y] + " in square [" + x + "][" + y + "]");
 		}
 	}
-	
-	 private BufferedImage loadImage(String imagePathOrUrl)
-	    {
-		 BufferedImage image = null;
-		 try {
-			 image = ImageIO.read(this.getClass().getResource(imagePathOrUrl));
-//			 image = ImageIO.read(new File(imagePathOrUrl));
-			} catch (IOException e) {System.out.println(e.getMessage());}
-		 return image;
-	    }
+
+	private BufferedImage loadImage(String imagePathOrUrl) {
+		BufferedImage image = null;
+		try {
+			image = ImageIO.read(this.getClass().getResource(imagePathOrUrl));
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
+		return image;
+	}
+
+	// empty interface implementation
+	@Override
+	public void mouseDragged(MouseEvent arg0) {}
 }

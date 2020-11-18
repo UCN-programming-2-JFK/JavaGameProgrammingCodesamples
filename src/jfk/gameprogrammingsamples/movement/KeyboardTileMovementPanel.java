@@ -24,7 +24,7 @@ public class KeyboardTileMovementPanel extends JPanel implements KeyListener {
 		frame.setResizable(false); 									// lock its size
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 		// set the X button click to close the window
 		frame.setSize(windowWidth, windowHeight); 					// set the size
-		frame.getContentPane().add(examplePanel); 					// add our border tiling panel
+		frame.getContentPane().add(examplePanel); 					// add our  panel
 		frame.getContentPane().setPreferredSize(new Dimension(windowWidth, windowHeight));
 		frame.pack();
 		frame.setVisible(true); 									// show the window
@@ -34,8 +34,8 @@ public class KeyboardTileMovementPanel extends JPanel implements KeyListener {
 	public KeyboardTileMovementPanel() {
 		grassTile = loadImage("/grasstile.png"); 					// load the grass texture
 		Image warriorTexture = loadImage("/warrior.png"); 			// load the warrior texture
-		warrior = new Sprite( new Point(96, 96), warriorTexture);
-		moveWarriorToTile(currentTile.x, currentTile.y);
+		warrior = new Sprite( new Point(96, 96), warriorTexture);	//create the warrior sprite object
+		moveWarriorToTile(currentTile.x, currentTile.y);			//move the warrior to the beginning tile
 	}
 	
 	private void moveWarriorToTile(int x, int y) {
@@ -50,7 +50,7 @@ public class KeyboardTileMovementPanel extends JPanel implements KeyListener {
 	}	
 
 	private void drawBackground(Graphics g) {
-		// for each column and row
+		// for each column and row - draw the grass tile
 		for (int columnCounter = 0; columnCounter < columns; columnCounter++) {
 			for (int rowCounter = 0; rowCounter < rows; rowCounter++) {
 				g.drawImage(grassTile, columnCounter * tileSize, rowCounter * tileSize, null);
@@ -58,6 +58,7 @@ public class KeyboardTileMovementPanel extends JPanel implements KeyListener {
 		}
 	}
 
+	//find out which direction to move the warrior based on the arrow pressed
 	@Override
 	public void keyPressed(KeyEvent arg0) {
 		int directionX = 0, directionY = 0;
@@ -71,10 +72,11 @@ public class KeyboardTileMovementPanel extends JPanel implements KeyListener {
 		
 		Point newSquare = new Point(currentTile.x + directionX, currentTile.y + directionY);
 
+		//only move if the desired new destination is on the map
 		if(isWithinMap(newSquare)) {
 			currentTile = newSquare;
 			//calculate where the warrior is on the screen using the column and row multiplied by the tileSize
-			//Remember to add half a tile to center the warrior in the tile!
+			//Remember to add half a tile to center the warrior on the tile
 			Point pixelPosition = new Point(newSquare.x * tileSize + tileSize/2,newSquare.y * tileSize + tileSize/2);
 			warrior.setPosition(pixelPosition);
 			repaint();
@@ -99,6 +101,7 @@ public class KeyboardTileMovementPanel extends JPanel implements KeyListener {
 		return image;
 	}	
 	
+	//empty interface implementations
 	@Override
 	public void keyReleased(KeyEvent arg0) {}
 	@Override

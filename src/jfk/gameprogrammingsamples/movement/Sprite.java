@@ -3,6 +3,7 @@ package jfk.gameprogrammingsamples.movement;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+//simple sprite class for storing an image at a location and drawing it centered, when asked to
 public class Sprite  {
 	
 	private Point position;
