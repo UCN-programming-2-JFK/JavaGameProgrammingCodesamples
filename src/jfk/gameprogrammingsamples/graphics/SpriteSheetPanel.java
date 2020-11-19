@@ -7,7 +7,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-public class SpritesheetPanel extends JPanel implements MouseMotionListener, MouseListener {
+public class SpriteSheetPanel extends JPanel implements MouseMotionListener, MouseListener {
 
 	//Private variables
 	static int tileSize = 128;										//the size of the sprite sheet images		
@@ -20,7 +20,7 @@ public class SpritesheetPanel extends JPanel implements MouseMotionListener, Mou
 
 	public static void main(String[] args) {
 		
-		SpritesheetPanel examplePanel = new SpritesheetPanel();		//create our panel
+		SpriteSheetPanel examplePanel = new SpriteSheetPanel();		//create our panel
 		examplePanel.addMouseMotionListener(examplePanel);			//let the panel listen to its own mouse movements
 		examplePanel.addMouseListener(examplePanel);				//let the panel listen to its own mouse clicks
 		
@@ -33,7 +33,7 @@ public class SpritesheetPanel extends JPanel implements MouseMotionListener, Mou
 	}
 	
 
-	public SpritesheetPanel() {
+	public SpriteSheetPanel() {
 		rpgSpriteSheet = loadImage("/rpg_spritesheet.png");		//load the png with the sprite sheet from the resources folder
 	}
 

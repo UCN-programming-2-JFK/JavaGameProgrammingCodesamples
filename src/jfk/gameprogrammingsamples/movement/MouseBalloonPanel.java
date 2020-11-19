@@ -51,8 +51,8 @@ public class MouseBalloonPanel extends JPanel implements MouseMotionListener, Mo
 			
 			moveBalloonsUpward();
 			removeBalloonsThatTouchTheTopOfTheWindow();
-			waitAShortInterval();
 			repaint(); // ask for the UI to be redrawn
+			waitAShortInterval();
 		}
 	}
 	
