@@ -2,27 +2,21 @@ package jfk.gameprogrammingsamples.maps;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.Random;
-
-import javax.imageio.ImageIO;
-import javax.management.monitor.MonitorSettingException;
 import javax.swing.*;
 
 public class DraggableMapPanel extends JPanel implements MouseListener, MouseMotionListener {
 
-	//Private variables
-	//static Image explosionSpriteSheet = null;			//the sprite sheet with the different stages of explosion
 	Random rnd = new Random();
 	static int tileSize = 64;							//size of the tiles in the sprite sheet in pixels
 	int rows = 16;										//the number of rows in the map
 	int columns = 24;									//the number of columns in the map
-	Font font = new Font("Arial", Font.PLAIN, 24);		//the font used to write which frame we're in
+	Font font = new Font("Arial", Font.PLAIN, 16);		//the font used to write which frame we're in
 	int currentXoffset, currentYoffset;					//stores how much the map is scrolled left and up
 	int[][] map = createRandomMap(columns, rows);
 	Point lastMousePosition = null;
 	static String windowTitle = "Draggable map sample";
+	
 	
 	public static void main(String[] args) {
 		
@@ -51,46 +45,41 @@ public class DraggableMapPanel extends JPanel implements MouseListener, MouseMot
 	}
 
 	public void paint(Graphics g) {
-		
-		drawMap(g);
 		g.setFont(font);
-		g.drawString("Offset: (" + currentXoffset + "," + currentYoffset + ")", 8, 50);
-		((JFrame) SwingUtilities.getWindowAncestor(this)).setTitle(windowTitle + " offset  = x: " + currentXoffset + ", y: " + currentYoffset);
+		drawMap(g);
+		((JFrame) SwingUtilities.getWindowAncestor(this)).setTitle(windowTitle + " ** Offset  = x: " + currentXoffset + ", y: " + currentYoffset);
 	}
 
 	private void drawMap(Graphics g) {
-		int firstVisibleColumn = getFirstVisibleColumn();
-		int firstVisibleRow = getFirstVisibleRow();
+		int firstVisibleColumn = currentXoffset / tileSize;
+		int firstVisibleRow =  currentYoffset / tileSize;
 		int columnsToDraw = getWidth() / tileSize;
 		int rowsToDraw = getHeight() / tileSize;
+		int lastVisibleColumn = firstVisibleColumn + columnsToDraw + 1;
+		int lastVisibleRow = firstVisibleRow + rowsToDraw + 1;
+		lastVisibleColumn = Math.min(lastVisibleColumn,columns-1);
+		lastVisibleRow = Math.min(lastVisibleRow,rows-1);
 		int xPosition, yPosition; 
 		
-		for(int columnCounter = 0; columnCounter < columns; columnCounter++ ) {
-			for(int rowCounter = 0; rowCounter < rows; rowCounter++ ) {
+		for(int columnCounter = firstVisibleColumn; columnCounter <= lastVisibleColumn; columnCounter++ ) {
+			for(int rowCounter = firstVisibleRow; rowCounter <= lastVisibleRow; rowCounter++ ) {
 				g.setColor(Color.blue);
 				if(map[columnCounter][rowCounter] == 1) {
 					g.setColor(Color.GREEN);
 				}
-				xPosition = columnCounter*tileSize - currentXoffset ;
+				xPosition = columnCounter * tileSize - currentXoffset ;
 				yPosition = rowCounter * tileSize - currentYoffset;
 				g.fillRect(xPosition, yPosition, tileSize, tileSize);
+				
+				//draw tile column and row with a shadow to make it easier to see
 				g.setColor(Color.black);
-				g.drawString("(" + columnCounter+ "," + rowCounter+ ")", xPosition, yPosition + 12);
+				g.drawString("(" + columnCounter+ "," + rowCounter+ ")", xPosition, yPosition + 16);
 				g.setColor(Color.white);
-				g.drawString("(" + columnCounter+ "," + rowCounter+ ")", xPosition +1, yPosition + 11);
+				g.drawString("(" + columnCounter+ "," + rowCounter+ ")", xPosition +1, yPosition + 15);
 			}	
 		}
 	}
 
-	private int getFirstVisibleRow() {
-		return currentYoffset / tileSize;
-	}
-
-	private int getFirstVisibleColumn() {
-		
-		return currentXoffset / tileSize;
-	}
-	
 	@Override
 	public void mousePressed(MouseEvent arg0) {
 		lastMousePosition = arg0.getPoint();
@@ -109,6 +98,7 @@ public class DraggableMapPanel extends JPanel implements MouseListener, MouseMot
 		repaint();
 	}
 
+	//empty implementations of interfaces
 	@Override
 	public void mouseMoved(MouseEvent arg0) {}
 	@Override
