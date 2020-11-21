@@ -4,118 +4,119 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Random;
+
 import javax.imageio.ImageIO;
+import javax.management.monitor.MonitorSettingException;
 import javax.swing.*;
 
-public class SimpleAnimatedPanel extends JPanel {
+public class SimpleAnimatedPanel extends JPanel implements MouseListener, MouseMotionListener {
 
 	//Private variables
-	static Image explosionSpriteSheet = null;			//the sprite sheet with the different stages of explosion
-	int currentFrame = 0;
-	static int tileSize = 128;							//size of the tiles in the sprite sheet in pixels
-	int rows = 7;										//the number of rows in the sprite sheet
-	int columns = 6;									//the number of columns in the sprite sheet
+	//static Image explosionSpriteSheet = null;			//the sprite sheet with the different stages of explosion
+	Random rnd = new Random();
+	static int tileSize = 64;							//size of the tiles in the sprite sheet in pixels
+	int rows = 16;										//the number of rows in the map
+	int columns = 24;									//the number of columns in the map
 	Font font = new Font("Arial", Font.PLAIN, 24);		//the font used to write which frame we're in
-	
+	int currentXoffset, currentYoffset;					//stores how much the map is scrolled left and up
+	int[][] map = createRandomMap(columns, rows);
+	Point lastMousePosition = null;
+	static String windowTitle = "Draggable map sample";
 	
 	public static void main(String[] args) {
 		
 		SimpleAnimatedPanel examplePanel = new SimpleAnimatedPanel();		//create our panel
+		examplePanel.addMouseListener(examplePanel);
+		examplePanel.addMouseMotionListener(examplePanel);
 		
-		JFrame frame = new JFrame("Simple animated sample");				//create a Frame (window)
+		JFrame frame = new JFrame(windowTitle);				//create a Frame (window)
 		frame.setResizable(false);											//lock its size
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);				//set the X button to close the window
-		//set the size based on the sprite sheet, with a bit added to compensate for the windows' titlebar and borders
-		frame.setSize(explosionSpriteSheet.getWidth(null)+ 20, explosionSpriteSheet.getHeight(null) + tileSize + 40);									
+		frame.setSize(800, 600);
+		//set the size based on the sprite sheet, with a bit added to compensate for the windows' titlebar and borders									
 		frame.getContentPane().add(examplePanel);							//add our panel
 		frame.setVisible(true);												//show the window
-		examplePanel.runGameLoop();											//start the game loop, which runs the animation and refreshes the screen
 	}
 	
-
-	public SimpleAnimatedPanel() {
-		explosionSpriteSheet = loadImage("/explosionspritesheet.png");		//load the png with the sprite sheet from the resources folder
+	private int[][] createRandomMap(int columns, int rows) {
+		
+		int[][] map = new int[columns][rows];
+		for(int columnCounter = 0; columnCounter < columns; columnCounter++ ) {
+			for(int rowCounter = 0; rowCounter < rows; rowCounter++ ) {
+				if(rnd.nextInt(4) == 0) {map[columnCounter][rowCounter] = 1;}
+			}	
+		}
+		return map;
 	}
 
 	public void paint(Graphics g) {
 		
-		drawBackground(g);
-		drawSpriteSheetAndCurrentTile(g);
-		drawCorrectFrameToScreen(g);
-	}
-
-	private void drawSpriteSheetAndCurrentTile(Graphics g) {
-		
-		//draw the entire sprite sheet
-		g.drawImage(explosionSpriteSheet, 0,tileSize, null);
-
-		//and a box around the current tile
-		g.setColor(Color.cyan);
-		int frameRow = currentFrame / columns;
-		int frameColumn = currentFrame % columns;
-		g.drawRect(frameColumn * tileSize, tileSize + frameRow * tileSize, tileSize, tileSize);
-		
-		//and the number of the current frame
-		g.setColor(Color.white);
+		drawMap(g);
 		g.setFont(font);
-		g.drawString("Current frame: " + currentFrame, 4, 24);	
+		g.drawString("Offset: (" + currentXoffset + "," + currentYoffset + ")", 8, 50);
+		((JFrame) SwingUtilities.getWindowAncestor(this)).setTitle(windowTitle + " offset  = x: " + currentXoffset + ", y: " + currentYoffset);
 	}
 
-	private void drawBackground(Graphics g) {
-		g.setColor(Color.black);
-		g.fillRect(0,0,getWidth(), getHeight());
-	}
-
-	//runs the game loop forever
-	public void runGameLoop() {
+	private void drawMap(Graphics g) {
+		int firstVisibleColumn = getFirstVisibleColumn();
+		int firstVisibleRow = getFirstVisibleRow();
+		int columnsToDraw = getWidth() / tileSize;
+		int rowsToDraw = getHeight() / tileSize;
+		int xPosition, yPosition; 
 		
-		while (true) { // run as long as the window exists
-			currentFrame ++;
-			if(currentFrame >= rows * columns) {
-				currentFrame = 0;
-			}
-			repaint(); // ask for the UI to be redrawn
-			waitAShortInterval();
+		for(int columnCounter = 0; columnCounter < columns; columnCounter++ ) {
+			for(int rowCounter = 0; rowCounter < rows; rowCounter++ ) {
+				g.setColor(Color.blue);
+				if(map[columnCounter][rowCounter] == 1) {
+					g.setColor(Color.GREEN);
+				}
+				xPosition = columnCounter*tileSize - currentXoffset ;
+				yPosition = rowCounter * tileSize - currentYoffset;
+				g.fillRect(xPosition, yPosition, tileSize, tileSize);
+				g.setColor(Color.black);
+				g.drawString("(" + columnCounter+ "," + rowCounter+ ")", xPosition, yPosition + 12);
+				g.setColor(Color.white);
+				g.drawString("(" + columnCounter+ "," + rowCounter+ ")", xPosition +1, yPosition + 11);
+			}	
 		}
 	}
-	
-	private void waitAShortInterval() {
-		try {
-			Thread.sleep(30);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-	
 
-	private void drawCorrectFrameToScreen(Graphics g) {
+	private int getFirstVisibleRow() {
+		return currentYoffset / tileSize;
+	}
+
+	private int getFirstVisibleColumn() {
 		
-		int frameRow = currentFrame / columns;
-		int frameColumn = currentFrame % columns;
-		int halfSize = tileSize/2;	
-		
-		//we find top left and bottom right corner of the destination rectangle we want to draw to on screen (on the JPanel)
-		 Point drawDestinationTopLeftCorner = new Point(getWidth()/2 - halfSize, 0);
-		 Point drawDestinationBottomRightCorner = new Point(drawDestinationTopLeftCorner.x + tileSize, drawDestinationTopLeftCorner.y + tileSize);
-
-		//we find top left and bottom right corner of the source rectangle we want to get a bush image from (on the sprite sheet)
-		Point imageSourceTopLeftCorner = new Point(frameColumn * tileSize, frameRow * tileSize);
-		Point imageSourceBottomRightCorner = new Point(imageSourceTopLeftCorner.x + tileSize, imageSourceTopLeftCorner.y + tileSize);
-
-		//we draw from the source rectangle in the sprite sheet to the destination rectangle on screen 
-		g.drawImage(explosionSpriteSheet, 	drawDestinationTopLeftCorner.x, drawDestinationTopLeftCorner.y,
-											drawDestinationBottomRightCorner.x, drawDestinationBottomRightCorner.y,		
-											imageSourceTopLeftCorner.x, imageSourceTopLeftCorner.y, 
-											imageSourceBottomRightCorner.x,	imageSourceBottomRightCorner.y, null);
+		return currentXoffset / tileSize;
 	}
 	
-	private Image loadImage(String imagePathOrUrl) {
-		Image image = null;
-		try {
-			image = ImageIO.read(this.getClass().getResource(imagePathOrUrl));
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
-		}
-		return image;
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		lastMousePosition = arg0.getPoint();
 	}
+
+	@Override
+	public void mouseDragged(MouseEvent arg0) {
+		currentXoffset += lastMousePosition.x - arg0.getPoint().x;
+		if(currentXoffset <= 0) { currentXoffset = 0;}
+		if(currentXoffset >= columns*tileSize - getWidth()) { currentXoffset = columns*tileSize - getWidth();}
+		currentYoffset +=  lastMousePosition.y - arg0.getPoint().y;
+		if(currentYoffset <= 0) { currentYoffset = 0;}
+		if(currentYoffset >= rows*tileSize - getHeight()) { currentYoffset = rows*tileSize - getHeight();}
+		lastMousePosition = arg0.getPoint();
+		
+		repaint();
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent arg0) {}
+	@Override
+	public void mouseClicked(MouseEvent arg0) {}
+	@Override
+	public void mouseEntered(MouseEvent arg0) {}
+	@Override
+	public void mouseExited(MouseEvent arg0) {}
+	@Override
+	public void mouseReleased(MouseEvent arg0) {}
 }
