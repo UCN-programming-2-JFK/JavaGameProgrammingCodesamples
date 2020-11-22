@@ -57,9 +57,11 @@ public class DraggableMapPanel extends JPanel implements MouseListener, MouseMot
 		int rowsToDraw = getHeight() / tileSize;
 		int lastVisibleColumn = firstVisibleColumn + columnsToDraw + 1;
 		int lastVisibleRow = firstVisibleRow + rowsToDraw + 1;
+		//in case we're one over the number of rows/columns, limit ourselves to the map's size
 		lastVisibleColumn = Math.min(lastVisibleColumn,columns-1);
 		lastVisibleRow = Math.min(lastVisibleRow,rows-1);
-		int xPosition, yPosition; 
+		
+		int xPositionForTile, yPositionForTile; 
 		
 		for(int columnCounter = firstVisibleColumn; columnCounter <= lastVisibleColumn; columnCounter++ ) {
 			for(int rowCounter = firstVisibleRow; rowCounter <= lastVisibleRow; rowCounter++ ) {
@@ -67,15 +69,15 @@ public class DraggableMapPanel extends JPanel implements MouseListener, MouseMot
 				if(map[columnCounter][rowCounter] == 1) {
 					g.setColor(Color.GREEN);
 				}
-				xPosition = columnCounter * tileSize - currentXoffset ;
-				yPosition = rowCounter * tileSize - currentYoffset;
-				g.fillRect(xPosition, yPosition, tileSize, tileSize);
+				xPositionForTile = columnCounter * tileSize - currentXoffset ;
+				yPositionForTile = rowCounter * tileSize - currentYoffset;
+				g.fillRect(xPositionForTile, yPositionForTile, tileSize, tileSize);
 				
-				//draw tile column and row with a shadow to make it easier to see
+				//write tile column and row with a shadow to make it easier to see
 				g.setColor(Color.black);
-				g.drawString("(" + columnCounter+ "," + rowCounter+ ")", xPosition, yPosition + 16);
+				g.drawString("(" + columnCounter+ "," + rowCounter+ ")", xPositionForTile, yPositionForTile + 16);
 				g.setColor(Color.white);
-				g.drawString("(" + columnCounter+ "," + rowCounter+ ")", xPosition +1, yPosition + 15);
+				g.drawString("(" + columnCounter+ "," + rowCounter+ ")", xPositionForTile +1, yPositionForTile + 15);
 			}	
 		}
 	}
