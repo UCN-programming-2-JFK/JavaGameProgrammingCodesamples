@@ -14,6 +14,8 @@ public class SimpleClockbasedAnimation extends JPanel {
 	//Private variables
 	Image rotatingCoinSpriteSheet = null;								//the sprite sheet with the different stages of explosion
 	final int numberOfFramesInAnimation = 6;
+	final int lengthOfAnimationInMilliseconds = 900;
+	final int lengthOfSingleFrame = lengthOfAnimationInMilliseconds / numberOfFramesInAnimation;
 	int tileSize = 128;
 	
 	public static void main(String[] args) {
@@ -42,11 +44,11 @@ public class SimpleClockbasedAnimation extends JPanel {
 		for	(int coinCounter = 0; coinCounter < 8; coinCounter++) {
 			
 			//get only the millisecond part of the time, by using the modulus (%) operator which returns the remainder of an integer division
-			long millisecond = System.currentTimeMillis() % 1000;
+			long millisecond = System.currentTimeMillis() % lengthOfAnimationInMilliseconds;
 			
 			//divide the second into sixths, by dividing by a bit more than a sixth of 1000 (which would be 166,666)
 			//this gives us a value from 0 to 5 over and over again, which is perfect for looking up the current animation frame.
-			int currentFrame = (int)((float)millisecond / (float)167);
+			int currentFrame = (int)(millisecond/lengthOfSingleFrame);
 			
 
 			//find where to start the drawing, so there's room for 8 coins
