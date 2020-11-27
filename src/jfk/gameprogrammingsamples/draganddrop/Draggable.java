@@ -1,4 +1,4 @@
-package jfk.gameprogrammingsamples.gameobjectdraganddrop;
+package jfk.gameprogrammingsamples.draganddrop;
 
 import java.awt.Point;
 

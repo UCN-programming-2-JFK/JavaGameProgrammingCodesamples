@@ -1,4 +1,4 @@
-package jfk.gameprogrammingsamples.gameobjectdraganddrop;
+package jfk.gameprogrammingsamples.draganddrop;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -24,7 +24,7 @@ public class DragAndDropPanel extends JPanel implements MouseMotionListener, Mou
 	Font font = new Font("Arial", Font.PLAIN, 24);
 	
 	public DragAndDropPanel() {
-		cardTileSheet = loadImage("/cards.png"); // load the png with the card sprite sheet from the resources folder
+		cardTileSheet = loadImage("/draganddrop/cards.png"); // load the png with the card sprite sheet from the resources folder
 		createAndArrangeCards();
 	}
 

@@ -20,7 +20,7 @@ public class KeyboardTileMovementPanel extends JPanel implements KeyListener {
 		KeyboardTileMovementPanel examplePanel = new KeyboardTileMovementPanel(); 	// create our panel
 		examplePanel.addKeyListener(examplePanel); 									// let the panel listen to its own key presses
 
-		JFrame frame = new JFrame("Tilebased keyboard movement"); 	// create a Frame (window)
+		JFrame frame = new JFrame("Tilebased keyboard movement - use arrow keys"); 	// create a Frame (window)
 		frame.setResizable(false); 									// lock its size
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 		// set the X button click to close the window
 		frame.setSize(windowWidth, windowHeight); 					// set the size
@@ -32,8 +32,8 @@ public class KeyboardTileMovementPanel extends JPanel implements KeyListener {
 	}
 	
 	public KeyboardTileMovementPanel() {
-		grassTile = loadImage("/grasstile.png"); 					// load the grass texture
-		Image warriorTexture = loadImage("/warrior.png"); 			// load the warrior texture
+		grassTile = loadImage("/movement/grasstile.png"); 					// load the grass texture
+		Image warriorTexture = loadImage("/movement/warrior.png"); 			// load the warrior texture
 		warrior = new Sprite( new Point(96, 96), warriorTexture);	//create the warrior sprite object
 		moveWarriorToTile(currentTile.x, currentTile.y);			//move the warrior to the beginning tile
 	}

@@ -28,8 +28,8 @@ public class ParallaxScrollingPanel extends JPanel {
 	}
 	
 	public ParallaxScrollingPanel() {
-		galaxyBackground = loadImage("/galaxy.png");		//load the png with the sprite sheet from the resources folder
-		transparentStarfield = loadImage("/starfield.png");		//load the png with the sprite sheet from the resources folder
+		galaxyBackground = loadImage("/graphics/galaxy.png");		//load the png with the sprite sheet from the resources folder
+		transparentStarfield = loadImage("/graphics/starfield.png");		//load the png with the sprite sheet from the resources folder
 	}
 
 	private void run() {
@@ -55,9 +55,9 @@ public class ParallaxScrollingPanel extends JPanel {
 	private void moveStarfields() {
 		
 		//move all offsets by a bit, at different speeds
-		starfieldOffsets[0] -= .25;		//move a quarter pixel left
-		starfieldOffsets[1] -= .75;		//move three quarters of a pixel left
-		starfieldOffsets[2] -= 1.5;		//move one and a half pixels left
+		starfieldOffsets[0] -= .5;		//move a quarter pixel left
+		starfieldOffsets[1] -= 2;		//move three quarters of a pixel left
+		starfieldOffsets[2] -= 4;		//move one and a half pixels left
 		
 		//check up on all layers. 
 		//if the entire image is off the screen to the left, move it one image-width to the right, 

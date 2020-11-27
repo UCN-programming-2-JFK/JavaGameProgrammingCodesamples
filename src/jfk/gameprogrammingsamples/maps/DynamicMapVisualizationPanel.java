@@ -52,8 +52,8 @@ public class DynamicMapVisualizationPanel extends JPanel implements MouseMotionL
 
 	public DynamicMapVisualizationPanel() {
 		// load the PNGs with the sprite sheets from the resources folder
-		landSpriteSheet = loadImage("/landwatertiles.png"); 		
-		roadSpriteSheet = loadImage("/roadTileMap_striped.png"); 
+		landSpriteSheet = loadImage("/maps/landwatertiles.png"); 		
+		roadSpriteSheet = loadImage("/maps/roadTileMap_striped.png"); 
 		currentSpriteSheet = landSpriteSheet;	//set up for initially drawing land/sea 
 	}
 

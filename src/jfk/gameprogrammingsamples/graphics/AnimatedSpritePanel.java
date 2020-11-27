@@ -33,7 +33,7 @@ public class AnimatedSpritePanel extends JPanel implements MouseMotionListener, 
 	}
 	
 	public AnimatedSpritePanel() {
-		explosionSpriteSheet = loadImage("/explosionspritesheet.png");		//load the png with the sprite sheet from the resources folder
+		explosionSpriteSheet = loadImage("/graphics/explosionspritesheet.png");		//load the png with the sprite sheet from the resources folder
 	}
 
 	public void paint(Graphics g) {

@@ -1,4 +1,4 @@
-package jfk.gameprogrammingsamples.stateVisualization;
+package jfk.gameprogrammingsamples.graphics;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -42,7 +42,7 @@ public class GrowingGardenPanel extends JPanel implements MouseMotionListener {
 	
 
 	public GrowingGardenPanel() {
-		bushSpriteSheet = loadImage("/bush.png");					//load the png with the sprite sheet from the resources folder
+		bushSpriteSheet = loadImage("/graphics/bush.png");					//load the png with the sprite sheet from the resources folder
 	}
 
 	public void paint(Graphics g) {

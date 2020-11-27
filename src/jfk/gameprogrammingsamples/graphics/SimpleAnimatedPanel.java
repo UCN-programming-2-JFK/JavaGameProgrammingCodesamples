@@ -34,7 +34,7 @@ public class SimpleAnimatedPanel extends JPanel {
 	
 
 	public SimpleAnimatedPanel() {
-		explosionSpriteSheet = loadImage("/explosionspritesheet.png");		//load the png with the sprite sheet from the resources folder
+		explosionSpriteSheet = loadImage("/graphics/explosionspritesheet.png");		//load the png with the sprite sheet from the resources folder
 	}
 
 	public void paint(Graphics g) {

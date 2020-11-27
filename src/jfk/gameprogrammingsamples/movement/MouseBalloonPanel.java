@@ -37,7 +37,7 @@ public class MouseBalloonPanel extends JPanel implements MouseMotionListener, Mo
 	
 	//Constructor to load the balloon image and calculate half width/height
 	public MouseBalloonPanel() {
-		balloonImage = loadImage("/balloon.png"); 				// load the grass texture
+		balloonImage = loadImage("/movement/balloon.png"); 				// load the grass texture
 		//calculate half of a balloon, to be able to center it on the desired coordinate
 		halfBalloonWidth = balloonImage.getWidth(null) / 2;		
 		halfBalloonHeight = balloonImage.getHeight(null) / 2;

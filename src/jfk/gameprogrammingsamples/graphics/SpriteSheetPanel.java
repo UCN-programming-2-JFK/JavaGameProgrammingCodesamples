@@ -34,7 +34,7 @@ public class SpriteSheetPanel extends JPanel implements MouseMotionListener, Mou
 	
 
 	public SpriteSheetPanel() {
-		rpgSpriteSheet = loadImage("/rpg_spritesheet.png");		//load the png with the sprite sheet from the resources folder
+		rpgSpriteSheet = loadImage("/graphics/rpg_spritesheet.png");		//load the png with the sprite sheet from the resources folder
 	}
 
 	public void paint(Graphics g) {

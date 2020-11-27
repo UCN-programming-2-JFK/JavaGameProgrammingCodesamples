@@ -32,8 +32,8 @@ public class NineSlicePanel extends JPanel implements MouseMotionListener {
 	}
 	
 	public NineSlicePanel() {
-		threeSliceSpriteSheet = loadImage("/threeslice.png");			//load the png with the sprite sheet from the resources folder
-		nineSliceSpriteSheet = loadImage("/nineslice.png");			
+		threeSliceSpriteSheet = loadImage("/graphics/threeslice.png");			//load the png with the sprite sheet from the resources folder
+		nineSliceSpriteSheet = loadImage("/graphics/nineslice.png");			
 	}
 
 	public void paint(Graphics g) {
