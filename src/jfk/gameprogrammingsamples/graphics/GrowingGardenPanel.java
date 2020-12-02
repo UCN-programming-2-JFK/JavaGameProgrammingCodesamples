@@ -11,7 +11,6 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import jfk.tools.Toolbox;
 
 public class GrowingGardenPanel extends JPanel implements MouseMotionListener {
 

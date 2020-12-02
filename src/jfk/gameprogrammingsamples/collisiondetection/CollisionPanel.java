@@ -19,7 +19,7 @@ public class CollisionPanel extends JPanel implements KeyListener {
 	Point currentDirection = new Point();
 	Random rnd = new Random();
 	int asteroidsHit = 0;
-	Font font = new Font("Arial", 0, 15);
+	Font font = new Font("Arial", 0, 24);
 
 	public static void main(String[] args) {
 
@@ -49,7 +49,6 @@ public class CollisionPanel extends JPanel implements KeyListener {
 			MovingSprite asteroid = new MovingSprite(getRandomPointForAsteroidAboveScreen(), new Point(0,4), asteroidImage);
 			asteroids.add(asteroid);
 		}
-		
 	}
 	
 	private Point getRandomPointForAsteroidAboveScreen() {
@@ -153,13 +152,6 @@ public class CollisionPanel extends JPanel implements KeyListener {
 		}
 	}
 
-	private Image loadImage(String imagePathOrUrl) {
-		Image image = null;
-		try {image = ImageIO.read(this.getClass().getResource(imagePathOrUrl));}
-		catch (IOException e) {System.out.println(e.getMessage());}
-		return image;
-	}
-
 	@Override
 	public void keyReleased(KeyEvent arg0) {
 		switch (arg0.getKeyCode()) {
@@ -171,7 +163,13 @@ public class CollisionPanel extends JPanel implements KeyListener {
 		}
 	}
 
-	@Override
-	public void keyTyped(KeyEvent arg0) {
+	private Image loadImage(String imagePathOrUrl) {
+		Image image = null;
+		try {image = ImageIO.read(this.getClass().getResource(imagePathOrUrl));}
+		catch (IOException e) {System.out.println(e.getMessage());}
+		return image;
 	}
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {}
 }

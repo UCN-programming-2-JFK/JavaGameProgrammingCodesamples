@@ -2,3 +2,6 @@ TODO
 
 - statebased visualization of sprite (different directions), with time-based animation
 - hiding mouse cursor and using graphical cursor, indicating possibilities (attack/move/no action) to signal what's possible with what the cursor is over
+- juicing stuff up (visual effects, bounce, glow, etc.)
+- scene management
+- menu (active and inactive visual component with drawing from the correct menu)
