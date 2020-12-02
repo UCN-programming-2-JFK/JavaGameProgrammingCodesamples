@@ -3,7 +3,7 @@ package jfk.gameprogrammingsamples.scenemanagement.scenes;
 import java.awt.Color;
 import java.awt.Graphics;
 
-public class SplashScene extends BaseScene {
+public class TitleScene extends BaseScene {
 
 	long firstUpdate;
 	boolean isFirstUpdate = true;
@@ -27,10 +27,10 @@ public class SplashScene extends BaseScene {
 	public void draw(Graphics g) {
 		fillBackgroundWithColor(g, Color.yellow);
 		g.setColor(Color.black);
-		writeTextCenteredOnScreen(g, "SplashScene (" + (3-millisecondsShown/1000) + ")", Color.black);
+		writeTextCenteredOnScreen(g, "TitleScene (" + (3-millisecondsShown/1000) + ")", Color.black);
 	}
 
-	public SplashScene() {
-		setName("SplashScene");
+	public TitleScene() {
+		setName("TitleScene");
 	}
 }

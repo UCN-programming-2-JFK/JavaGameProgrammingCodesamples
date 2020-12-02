@@ -13,13 +13,13 @@ import jfk.gameprogrammingsamples.scenemanagement.scenes.GameOverScene;
 import jfk.gameprogrammingsamples.scenemanagement.scenes.GameScene;
 import jfk.gameprogrammingsamples.scenemanagement.scenes.MenuScene;
 import jfk.gameprogrammingsamples.scenemanagement.scenes.SceneManager;
-import jfk.gameprogrammingsamples.scenemanagement.scenes.SplashScene;
+import jfk.gameprogrammingsamples.scenemanagement.scenes.TitleScene;
 
 
 public class SceneManagerPanel extends JPanel implements KeyListener{
 
 	
-	SceneManager sceneManager = new SceneManager();
+	SceneManager sceneManager;
 	public static boolean QUITGAMEPRESSED, STARTGAMEPRESSED, ROLLDICEPRESSED;
 	public static Font bigFont = new Font("Verdana", Font.PLAIN, 18);
 	
@@ -44,13 +44,18 @@ public class SceneManagerPanel extends JPanel implements KeyListener{
 		
 		public SceneManagerPanel(){
 			this.setFocusable(true);
-			sceneManager.addScene(new SplashScene());
+			createSceneManagerAndScenes();
+		}
+		
+		private void createSceneManagerAndScenes() {
+			sceneManager = new SceneManager();
+			sceneManager.addScene(new TitleScene());
 			sceneManager.addScene(new MenuScene());
 			sceneManager.addScene(new GameScene());
 			sceneManager.addScene(new GameOverScene());
-			sceneManager.setCurrentScene("SplashScene");
+			sceneManager.setCurrentScene("TitleScene");
 		}
-		
+
 		public void runGameLoop() {
 
 			while (true) { // run as long as the window exists
@@ -97,8 +102,5 @@ public class SceneManagerPanel extends JPanel implements KeyListener{
 		}
 
 		@Override
-		public void keyTyped(KeyEvent arg0) {
-			// TODO Auto-generated method stub
-			
-		}
+		public void keyTyped(KeyEvent arg0) {}
 }

@@ -9,14 +9,14 @@ import javax.swing.*;
 public class SceneHandlingViaEnumsPanel extends JPanel implements KeyListener {
 
 	public enum GameState {
-		SplashScreen, MenuScreen, GameRunning, GameOver
+		TitleScreen, MenuScreen, GameRunning, GameOver
 	}
 
 	Random rnd = new Random();
 	int lastRoll = 0;
 	long gameStartTime;
-	long splashScreenAgeInMilliseconds;
-	private GameState currentState = GameState.SplashScreen;
+	long titleScreenAgeInMilliseconds;
+	private GameState currentState = GameState.TitleScreen;
 
 	public GameState getCurrentState() {
 		return currentState;
@@ -65,9 +65,9 @@ public class SceneHandlingViaEnumsPanel extends JPanel implements KeyListener {
 		case GameOver: break;
 		case GameRunning: break;
 		case MenuScreen: break;
-		case SplashScreen:
-			splashScreenAgeInMilliseconds = System.currentTimeMillis() - gameStartTime;
-			if (splashScreenAgeInMilliseconds > 3000) { setCurrentState(GameState.MenuScreen);}
+		case TitleScreen:
+			titleScreenAgeInMilliseconds = System.currentTimeMillis() - gameStartTime;
+			if (titleScreenAgeInMilliseconds > 3000) { setCurrentState(GameState.MenuScreen);}
 			break;
 		default: break;
 		}
@@ -91,10 +91,10 @@ public class SceneHandlingViaEnumsPanel extends JPanel implements KeyListener {
 			fillBackgroundWithColor(g, Color.blue);
 			writeTextCenteredOnScreen(g, "MENU: G for Game, Q to Quit", Color.white);
 			break;
-		case SplashScreen:
+		case TitleScreen:
 			fillBackgroundWithColor(g, Color.yellow);
 			g.setColor(Color.black);
-			writeTextCenteredOnScreen(g, "SplashScene (" + (3 - splashScreenAgeInMilliseconds / 1000) + ")", Color.black);
+			writeTextCenteredOnScreen(g, "TitleScene (" + (3 - titleScreenAgeInMilliseconds / 1000) + ")", Color.black);
 			break;
 		default:
 			break;

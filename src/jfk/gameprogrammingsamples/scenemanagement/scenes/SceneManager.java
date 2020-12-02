@@ -14,6 +14,7 @@ public class SceneManager implements GameComponent {
 	
 	public void setCurrentScene(BaseScene currentScene) {
 		this.currentScene = currentScene;
+		getCurrentScene().onFocus();
 	}
 	
 	public void setCurrentScene(String sceneName) {
@@ -31,13 +32,12 @@ public class SceneManager implements GameComponent {
 	}
 	
 	@Override
-	public void update() {
-		
+	public void update() {	
 		if(getCurrentScene() != null){
 			getCurrentScene().update();
-		}
-		
+		}	
 	}
+	
 	@Override
 	public void draw(Graphics g) {
 		if(getCurrentScene() != null){
