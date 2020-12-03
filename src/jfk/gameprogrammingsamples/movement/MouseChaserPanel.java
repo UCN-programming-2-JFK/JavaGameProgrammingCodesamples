@@ -38,19 +38,15 @@ public class MouseChaserPanel extends JPanel implements MouseMotionListener {
 		
 	}
 
-	
-	//Constructor to load the balloon image and calculate half width/height
 	public MouseChaserPanel() {
-		tractorImage = loadImage("/movement/tractor_spritesheet.png"); 				// load the grass texture
-		// Transparent 16 x 16 pixel cursor image.
-		Image cursorImg = loadImage("/movement/x.png");
+		tractorImage = loadImage("/movement/tractor_spritesheet.png"); 		// load tractor spritesheet with tractor pointing in all 8 directions
+		Image cursorImg = loadImage("/movement/x.png");						//load the "x" to use for mouse cursor
 
-		// Create a new blank cursor.
+		// Create a new cursor from the 'x' image
 		Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0), "green 'X' cursor");
 
-		// Set the blank cursor to the JFrame.
+		// Set the new cursor on the JFrame.
 		setCursor(blankCursor);
-
 	}
 
 	
@@ -66,14 +62,15 @@ public class MouseChaserPanel extends JPanel implements MouseMotionListener {
 	
 	private void moveTractorTowardMouse() {
 		
-		
+		//find out what direction to move on the two axes
 		int distanceToMouseX = currentMousePosition.x - tractorPosition.x ;
 		int distanceToMouseY = currentMousePosition.y - tractorPosition.y ;
 		
-		//if(Math.abs(distanceToMouseX) > Math.abs(distanceToMouseY)*2) distanceToMouseY = 0;
-		
+		//find out whether that is positive, negative or zero (mathematical 'sign' operation)
 		int directionXToMouse = (int)Math.signum( distanceToMouseX );
 		int directionYToMouse = (int)Math.signum( distanceToMouseY );
+		
+		//find out which image to use, by looking at the direction on both axes
 		if(directionXToMouse == 0 && directionYToMouse == -1) { tractorImageIndex = 0;}
 		if(directionXToMouse == 1 && directionYToMouse == -1) { tractorImageIndex = 1;}
 		if(directionXToMouse == 1 && directionYToMouse == 0) { tractorImageIndex = 2;}
@@ -82,20 +79,22 @@ public class MouseChaserPanel extends JPanel implements MouseMotionListener {
 		if(directionXToMouse == -1 && directionYToMouse == 1) { tractorImageIndex = 5;}
 		if(directionXToMouse == -1 && directionYToMouse == 0) { tractorImageIndex = 6;}
 		if(directionXToMouse == -1 && directionYToMouse == -1) { tractorImageIndex = 7;}
+		
+		//add the direction to the current position, to find the tractor's new position
 		Point newTractorPosition = new Point(tractorPosition.x + directionXToMouse*speed, tractorPosition.y + directionYToMouse*speed);
+		
+		//ensure the tractor doesn't "overshoot" 
+		//(e.g. if it's 2 pixels away, and the speed is 3, then it would overshoot the target by 1 pixel).
 		if(Math.abs(newTractorPosition.x - currentMousePosition.x) <= speed) {newTractorPosition.x = currentMousePosition.x;}
 		if(Math.abs(newTractorPosition.y - currentMousePosition.y) <= speed) {newTractorPosition.y = currentMousePosition.y;}
-		tractorPosition = newTractorPosition;
 		
+		//update the tractor's position
+		tractorPosition = newTractorPosition;
 	}
 	
 
 	private void waitAShortInterval() {
-		try {
-			Thread.sleep(30);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		try {Thread.sleep(30);} catch (InterruptedException e) {e.printStackTrace();}
 	}
 
 	@Override
@@ -104,7 +103,10 @@ public class MouseChaserPanel extends JPanel implements MouseMotionListener {
 		drawTractorAt(tractorPosition, g);
 		g.setColor(Color.white);
 		g.setFont(font);
-		//g.drawString("Distance to mouse: ");// + tractorPositions.size(), 10, 24);
+		g.drawString("Mouse at: (" + currentMousePosition.x + "," + currentMousePosition.y + ")", 10,30);
+		g.drawString("Tractor at: (" + tractorPosition.x + "," + tractorPosition.y + ")", 10,60);
+		int distance = (int)currentMousePosition.distance(tractorPosition);
+		g.drawString("Distance is: " + distance, 10,90);
 	}
 
 
