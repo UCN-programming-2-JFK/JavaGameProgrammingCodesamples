@@ -15,14 +15,16 @@ public class FiniteStateMachinePanel extends JPanel {
 
 	//Private variables
 	
-	static int windowWidth = 800, windowHeight = 600;
-	public static final Font FONT = new Font("Courier New", Font.BOLD, 20);				//font for writing
+	static int windowWidth = 600, windowHeight = 400;
+	public static final Font FONT = new Font("Courier New", Font.BOLD, 16);				//font for writing
 	public static final Font BIGFONT = new Font("Courier New", Font.BOLD, 64);				//font for writing
 	FiniteStateCreature creature;
 	long lastUpdate;							//the last time an update was performed. Used to calculate time since last update, to smooth animations
 	ArrayList<Point.Float> food = new ArrayList<>();		//the list to hold all positions of food
 	Image creatureImage, creatureChewImage, creatureDeadImage;
 	Random rnd = new Random();
+	int numberOfFood = 15;
+	
 	public static void main(String[] args) {
 		
 		FiniteStateMachinePanel examplePanel = new FiniteStateMachinePanel();//create our panel
@@ -50,17 +52,16 @@ public class FiniteStateMachinePanel extends JPanel {
 		creatureImage = loadImage("/gamemechanics/finitestatecreature.png");
 		creatureChewImage = loadImage("/gamemechanics/finitestatecreature_chewimage.png");
 		creatureDeadImage = loadImage("/gamemechanics/finitestatecreature_deadimage.png");
-		creature = new FiniteStateCreature(new Point.Float(windowWidth/2, windowHeight/2), new Point.Float(), creatureImage, creatureChewImage, creatureDeadImage, food, FiniteStateCreature.CreatureState.WANDERING, new Dimension(windowWidth, windowHeight));
+		creature = new FiniteStateCreature(new Point.Float(windowWidth/2, windowHeight/2), new Point.Float(), creatureImage, creatureChewImage, creatureDeadImage, food, FiniteStateCreature.CreatureState.SEARCHING, new Dimension(windowWidth, windowHeight));
 	}
 
 	private void addFoodAtRandomPositions() {
-		for (int i = 0; i < 20; i++) {	
+		for (int i = 0; i < numberOfFood; i++) {	
 			food.add(new Point.Float(rnd.nextInt(windowWidth), rnd.nextInt(windowHeight)));
 		}
 	}
 
 	public void paint(Graphics g) {
-		
 		drawBackground(g);
 		drawFood(g);
 		creature.draw(g);
@@ -69,10 +70,9 @@ public class FiniteStateMachinePanel extends JPanel {
 	private void drawFood(Graphics g) {
 		int size = 6;
 		g.setColor(Color.green);
-	for (int i = 0; i < food.size(); i++) {
-		g.fillRect((int)food.get(i).x-size/2, (int)food.get(i).y-size/2, size, size);
-	}
-		
+		for (int i = 0; i < food.size(); i++) {
+			g.fillRect((int) food.get(i).x - size / 2, (int) food.get(i).y - size / 2, size, size);
+		}
 	}
 
 	private void drawBackground(Graphics g) {

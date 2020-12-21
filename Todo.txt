@@ -6,6 +6,7 @@ TODO
 - finite state machine (attack, eat, flee)
 - particle systems
 - composite components (child-components position and scale with the parent)
+- pathfinding A*
 Rotated images:
 https://stackoverflow.com/questions/8639567/java-rotating-images
 
