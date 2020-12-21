@@ -3,3 +3,22 @@ TODO
 - hiding mouse cursor and using graphical cursor, indicating possibilities (attack/move/no action) to signal what's possible with what the cursor is over
 - juicing stuff up (visual effects, bounce, glow, etc.)
 - menu (active and inactive visual component with drawing from the correct menu) (menu items with hidden color to figure out what item the mouse is over
+- finite state machine (attack, eat, flee)
+- particle systems
+- composite components (child-components position and scale with the parent)
+Rotated images:
+https://stackoverflow.com/questions/8639567/java-rotating-images
+
+public void draw(Graphics2D g) {
+    AffineTransform tr = new AffineTransform();
+    // X and Y are the coordinates of the image
+    tr.translate((int)getX(), (int)getY());
+    tr.rotate(
+            Math.toRadians(this.rotationAngle),
+            img.getWidth() / 2,
+            img.getHeight() / 2
+    );
+
+    // img is a BufferedImage instance
+    g.drawImage(img, tr, null);
+}
