@@ -5,9 +5,11 @@ import java.awt.geom.Dimension2D;
 import java.util.ArrayList;
 import java.util.Random;
 
-//simple sprite class for storing an image at a location and drawing it centered, when asked to
+//sprite class which has different behaviors (movement and visual representation) based on its state: searching for food, eating or dead.
 public class FiniteStateCreature  {
 	
+	
+	//Private variables ///////////
 	Random rnd = new Random();
 	private float speed = .1f;
 	//monster image from https://omagerio.itch.io/1200-tiny-monsters-sprites-16x16
@@ -21,6 +23,8 @@ public class FiniteStateCreature  {
 	private long msLeftOfEating = 0;
 	private float foodInBelly = 100;
 
+	
+	//setters and getters /////////////////////////////////////
 	public CreatureState getCurrentState() {
 		return currentState;
 	}
@@ -49,10 +53,13 @@ public class FiniteStateCreature  {
 		case DEAD : return deadImage;
 		
 		case EATING: 
+			//This creates a chewing animation by
+			//returning either the normal image or the eating image (open mouth)
+			//based on which quarter it is of the current time's second
 			long millisecondPartOfCurrentTime = System.currentTimeMillis() % 1000;
 			int quarterOfSecond = (int)millisecondPartOfCurrentTime / 250; 
-			boolean quarterIsEvenNumber = quarterOfSecond % 2 == 0;
-			if(quarterIsEvenNumber) return chewImage;
+			boolean isQuarterEvenNumber = quarterOfSecond % 2 == 0;
+			if(isQuarterEvenNumber) return chewImage;
 			else return regularImage;
 		
 		default: return null;
@@ -61,6 +68,16 @@ public class FiniteStateCreature  {
 
 	public void setImage(Image image) {
 		this.regularImage = image;
+	}
+
+	public float getDirectionInRadians() {
+		return directionInRadians;
+	}
+
+	public void setDirectionInRadians(float directionInRadians) {
+		this.directionInRadians = directionInRadians;
+		this.getMovement().x = (float)Math.cos(getDirectionInRadians())*speed;
+		this.getMovement().y = (float)Math.sin(getDirectionInRadians())*speed;
 	}
 	
 	public Dimension2D getTerrainBorder() {
@@ -85,6 +102,7 @@ public class FiniteStateCreature  {
 		}
 	}	
 	
+	// Constructor ////////////////////////////
 	public FiniteStateCreature(Point.Float position, Point.Float movement, Image image, Image chewImage, Image deadImage, ArrayList<Point.Float> foodPlacements, CreatureState currenState, Dimension2D terrainBorder) {
 		this.setPosition(position);
 		this.setMovement(movement);
@@ -96,6 +114,7 @@ public class FiniteStateCreature  {
 		this.setTerrainBorder(terrainBorder);
 	}
 
+	// Update and related methods //////////////////////////////
 	public void update(double msElapsedSinceLastUpdate) {
 		
 		switch (getCurrentState()) {
@@ -110,14 +129,7 @@ public class FiniteStateCreature  {
 		}
 	}
 
-	private void eat(double msElapsedSinceLastUpdate) {
-		msLeftOfEating -= msElapsedSinceLastUpdate;
-		if(msLeftOfEating <= 0) {
-			this.setFoodInBelly(getFoodInBelly()+30);
-			setCurrentState(CreatureState.SEARCHING);
-		}
-	}
-
+	//wanders randomly, staying within the borders of the JPanel and eats food that is close enough 
 	private void wander(double msElapsedSinceLastUpdate) {
 		turnSlightlyRightOrLeftAtRandom();
 		Point.Float newPosition = new Point.Float(getPosition().x + getMovement().x * (float)msElapsedSinceLastUpdate, getPosition().y + getMovement().y* (float)msElapsedSinceLastUpdate);
@@ -131,73 +143,35 @@ public class FiniteStateCreature  {
 		this.setFoodInBelly((float) (getFoodInBelly()-0.005f * msElapsedSinceLastUpdate));
 	}
 
+	//this method alters the direction the creature is going slightly either right or left at random 
+	private void turnSlightlyRightOrLeftAtRandom() {
+		float randomDirectionChangeInRadians = (rnd.nextFloat() * (float)Math.PI / 8) -  (float)Math.PI / 16;
+		this.setDirectionInRadians(this.getDirectionInRadians()+randomDirectionChangeInRadians);
+	}
+
 	private boolean touchesBorderAtPosition(java.awt.geom.Point2D.Float newPosition) {
 		return newPosition.x - getWidth()/2 < 0 || newPosition.x + getWidth()/2 > getTerrainBorder().getWidth()  ||
 				newPosition.y - getHeight()/2 < 0 || newPosition.y + getHeight()/2 > getTerrainBorder().getHeight();
 		}
+
+
+	private void findNewRandomDirection() {
+		float randomDirectionInRadians = rnd.nextFloat() * (float)Math.PI * 2;
+		this.setDirectionInRadians(randomDirectionInRadians);
+	}
 
 	private void eatFoodIfCloseEnough() {
 		Point.Float closestFoodPlacement = getClosestFoodPlacement();
 		if(closestFoodPlacement != null) {
 			Point.Float position = getPosition();
 			double distanceToClosestFood = closestFoodPlacement.distance(position);
-			//System.out.println(distanceToClosestFood);
 			if(distanceToClosestFood < this.getWidth()/2) {
 				this.setCurrentState(FiniteStateCreature.CreatureState.EATING);
 				foodPlacements.remove(closestFoodPlacement);
 			}
 		}
 	}
-	
-	public void draw(Graphics g){				
-		g.drawImage(getImage(), (int)getPosition().x - getWidth()/2, (int)getPosition().y- getHeight()/2, null);
-		g.setColor(Color.white);
-		g.setFont(FiniteStateMachinePanel.FONT);
-		g.drawString(getCurrentState().toString(), (int)getPosition().x - 45, (int)getPosition().y-20);
-		drawLifebar(g);
-	}
-	
-	private void drawLifebar(Graphics g) {
-		int width = 30;
-		int height = 7;
-		int left = (int)getPosition().x - width/2;
-		int top = (int)getPosition().y + 20;
-		g.setColor(Color.black);
-		g.fillRect(left, top, width, height);
-		setColorBasedOnBellyFullness(g);
-		g.fillRect(left, top, (int) (width * getFoodInBelly()/100), height);
-		g.setColor(Color.black);
-		g.drawRect(left, top, width, height);
-		
-	}
 
-	private void setColorBasedOnBellyFullness(Graphics g) {
-		if(this.getFoodInBelly()> 70) {g.setColor(Color.green);}
-		else if(this.getFoodInBelly() > 50) {g.setColor(Color.yellow);}
-		else if(this.getFoodInBelly() > 30) {g.setColor(Color.orange);}
-		else {g.setColor(Color.red);}
-	}
-
-	private void findNewRandomDirection() {
-		float randomDirectionInRadians = rnd.nextFloat() * (float)Math.PI * 2;
-		this.setDirectionInRadians(randomDirectionInRadians);
-	}
-	
-	private void turnSlightlyRightOrLeftAtRandom() {
-		float randomDirectionChangeInRadians = (rnd.nextFloat() * (float)Math.PI / 8) -  (float)Math.PI / 16;
-		this.setDirectionInRadians(this.getDirectionInRadians()+randomDirectionChangeInRadians);
-	}
-
-	public float getDirectionInRadians() {
-		return directionInRadians;
-	}
-
-	public void setDirectionInRadians(float directionInRadians) {
-		this.directionInRadians = directionInRadians;
-		this.getMovement().x = (float)Math.cos(getDirectionInRadians())*speed;
-		this.getMovement().y = (float)Math.sin(getDirectionInRadians())*speed;
-	}
-	
 	private Point.Float getClosestFoodPlacement(){
 		
 		double smallestDistanceSoFar = Float.MAX_VALUE;
@@ -212,5 +186,45 @@ public class FiniteStateCreature  {
 			}
 		}
 		return closestFoodPlacementSoFar;
+	}
+	
+	private void eat(double msElapsedSinceLastUpdate) {
+		msLeftOfEating -= msElapsedSinceLastUpdate;
+		if(msLeftOfEating <= 0) {
+			this.setFoodInBelly(getFoodInBelly()+30);
+			setCurrentState(CreatureState.SEARCHING);
+		}
+	}
+	
+	// Draw and related methods  //////////////////////
+	public void draw(Graphics g){				
+		g.drawImage(getImage(), (int)getPosition().x - getWidth()/2, (int)getPosition().y- getHeight()/2, null);
+		g.setColor(Color.white);
+		g.setFont(FiniteStateMachinePanel.FONT);
+		g.drawString(getCurrentState().toString(), (int)getPosition().x - 45, (int)getPosition().y-20);
+		drawLifebar(g);
+	}
+	
+	private void drawLifebar(Graphics g) {
+		int width = 30;
+		int height = 7;
+		int left = (int)getPosition().x - width/2;
+		int top = (int)getPosition().y + 20;
+		
+		g.setColor(Color.black);
+		g.fillRect(left, top, width, height);
+		
+		setColorBasedOnBellyFullness(getFoodInBelly(), g);
+		g.fillRect(left, top, (int) (width * getFoodInBelly()/100), height);
+		
+		g.setColor(Color.black);
+		g.drawRect(left, top, width, height);
+	}
+
+	private void setColorBasedOnBellyFullness(float foodInBelly, Graphics g) {
+		if(foodInBelly> 70) {g.setColor(Color.green);}
+		else if(foodInBelly > 50) {g.setColor(Color.yellow);}
+		else if(foodInBelly > 30) {g.setColor(Color.orange);}
+		else {g.setColor(Color.red);}
 	}
 }
