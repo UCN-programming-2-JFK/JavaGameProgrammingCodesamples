@@ -5,9 +5,11 @@ import java.awt.event.*;
 import java.util.Random;
 import javax.swing.*;
 
+
 public class DraggableMapPanel extends JPanel implements MouseListener, MouseMotionListener {
 
 	Random rnd = new Random();
+	Color greenColor = new Color(0,210, 0);
 	static int tileSize = 64;							//size of the tiles in the sprite sheet in pixels
 	int rows = 16;										//the number of rows in the map
 	int columns = 24;									//the number of columns in the map
@@ -67,7 +69,7 @@ public class DraggableMapPanel extends JPanel implements MouseListener, MouseMot
 			for(int rowCounter = firstVisibleRow; rowCounter <= lastVisibleRow; rowCounter++ ) {
 				g.setColor(Color.blue);
 				if(map[columnCounter][rowCounter] == 1) {
-					g.setColor(Color.GREEN);
+					g.setColor(greenColor);
 				}
 				xPositionForTile = columnCounter * tileSize - currentXoffset ;
 				yPositionForTile = rowCounter * tileSize - currentYoffset;
