@@ -1,4 +1,4 @@
-package jfk.gameprogrammingsamples.maps.generation;
+package jfk.gameprogrammingsamples.maps;
 
 import java.awt.Point;
 import java.util.*;
