@@ -111,6 +111,7 @@ frame.setLocationRelativeTo(null);
 		for(GeneratorConfiguration configuration : configurations) {
 			configurationCombo.addItem(configuration);
 		}
+		configurationCombo.setSelectedIndex(2);
 		controlPanel.add(configurationCombo, BorderLayout.CENTER);
 		
 		setLayout(new BorderLayout());
