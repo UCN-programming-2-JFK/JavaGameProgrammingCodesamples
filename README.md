@@ -4,4 +4,4 @@
 
 Here you can find code samples in Java (Eclipse projects) to see how to implement various aspects of a java game.  
 This readme is not updated yet.  
-For now, have a look [here](https://javagameprogramming.codesamples.dk/) for all the code samples.
+For now, have a look [here](https://javagameprogramming.codesamples.dk/) for explanations of all the code samples.
