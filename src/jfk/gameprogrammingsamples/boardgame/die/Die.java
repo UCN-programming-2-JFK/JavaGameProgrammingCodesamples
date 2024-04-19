@@ -27,8 +27,8 @@ public class Die {
 		if(msLeftRolling <= 0 ) {return;}
 		msLeftRolling -= msPassedSinceLastUpdate;
 		//System.out.println("msPassedSinceLastUpdate " + msPassedSinceLastUpdate);
-		setValue(random.nextInt(3)+1);
-		if(msLeftRolling < 0) {
+		setValue(random.nextInt(6)+1);
+		if(msLeftRolling <= 0) {
 			listener.rollEnded(new DieRollEvent(this));
 			//System.out.println("Roll ended");
 		}

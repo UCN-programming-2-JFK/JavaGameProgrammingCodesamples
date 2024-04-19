@@ -14,14 +14,14 @@ import jfk.gameprogrammingsamples.boardgame.die.Die;
 public class BoardGamePanel extends JPanel implements MouseListener {
 	long lastUpdate; // the last time an update was performed. Used to calculate time since last
 						// update, to smooth animations
-	public static final Font FONT = new Font("Courier New", Font.BOLD, 20);
+	public static final Font FONT = new Font("Courier New", Font.BOLD, 42);
 	static BoardGame game;
 
 	public BoardGamePanel() {
 		super();
 		java.util.List<PlayingPiece> pieces = new ArrayList<>();
 		pieces.add(new PlayingPiece(loadImage("/boardgame/playingpiece_64px_red.png"), "Anna"));
-		pieces.add(new PlayingPiece(loadImage("/boardgame/playingpiece_64px_yellow.png"), "Bob"));
+		pieces.add(new PlayingPiece(loadImage("/boardgame/playingpiece_64px_blue.png"), "Bob"));
 		Image spaceImage = loadImage("/boardgame/space_128px.png");
 		Image startSpaceImage = loadImage("/boardgame/startspace_128px.png");
 		Image dieFacesImage = loadImage("/boardgame/diefaces.png");
@@ -48,14 +48,16 @@ public class BoardGamePanel extends JPanel implements MouseListener {
 
 	public void paint(Graphics g) {
 		drawBackground(g);
-		drawCurrentPlayer(g);
+		if(!game.getDie().isRolling() && !game.isMoving()) {
+			drawCurrentPlayer(g);
+		}
 		game.draw(g);
 	}
 
 	private void drawCurrentPlayer(Graphics g) {
 		g.setColor(Color.white);
 		g.setFont(FONT);
-		g.drawString("Roll the die, "+ game.getCurrentPlayer().getPlayersName(), 330, 30);	
+		g.drawString("Roll the die, "+ game.getCurrentPlayer().getPlayersName(), 120, 90);	
 	}
 
 	private void drawBackground(Graphics g) {

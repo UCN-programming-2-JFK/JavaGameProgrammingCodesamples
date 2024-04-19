@@ -5,12 +5,8 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.imageio.ImageIO;
-
 import jfk.gameprogrammingsamples.boardgame.die.Die;
 import jfk.gameprogrammingsamples.boardgame.die.DieRollEvent;
 import jfk.gameprogrammingsamples.boardgame.die.DieRollerListenerIF;
@@ -25,15 +21,24 @@ public class BoardGame implements MouseListener, DieRollerListenerIF {
 	private float msLeftBeforeNextMove, msBetweenPieceMovements = 400;
 	private Die die;
 
+	public Die getDie() {
+		return die;
+	}
+
+	public void setDie(Die die) {
+		this.die = die;
+	}
+
 	public BoardGame(Image spaceImage, Image startTileImage, Image dieImage, List<PlayingPiece> playingPieces) {
 		super();
 		this.spaceImage = spaceImage;
 		this.startTileImage = startTileImage;
 		this.setPlayingPieces(playingPieces);
 		setBoard(createBoard());
-		// die = new Die(dieImage, new Point(200,200), currentPlayerIndex, null);
+		int diePositionX = getBoard().getTopLeft().x + getBoard().getWidth() - 236;
+		int diePositionY = getBoard().getTopLeft().y + 64;
 		die = new Die(dieImage,
-				new Point(getBoard().getTopLeft().x + getBoard().getWidth() - 236, getBoard().getTopLeft().y + 64), 700,
+				new Point(diePositionX, diePositionY), 700,
 				this);
 		newGame();
 	}
@@ -44,29 +49,36 @@ public class BoardGame implements MouseListener, DieRollerListenerIF {
 
 	private Board createBoard() {
 		Board newBoard = new Board(128, 120);
-		int tileSize = spaceImage.getWidth(null);
+		newBoard.setTrack(createTrack());
+		return newBoard;
+	}
 
+	private List<Tile> createTrack() {
+
+		List<Tile> track = new ArrayList<Tile>();
+		int tileSize = spaceImage.getWidth(null);
 		Tile startTile = new Tile(new Point(tileSize * 4, tileSize * 3), tileSize, startTileImage);
-		newBoard.getTrack().add(startTile);
-		newBoard.getTrack().add(new Tile(new Point(tileSize * 4, tileSize * 2), tileSize, spaceImage));
-		newBoard.getTrack().add(new Tile(new Point(tileSize * 4, tileSize * 1), tileSize, spaceImage));
-		newBoard.getTrack().add(new Tile(new Point(tileSize * 3, tileSize * 1), tileSize, spaceImage));
-		newBoard.getTrack().add(new Tile(new Point(tileSize * 2, tileSize * 1), tileSize, spaceImage));
-		newBoard.getTrack().add(new Tile(new Point(tileSize * 2, 0), tileSize, spaceImage));
-		newBoard.getTrack().add(new Tile(new Point(tileSize, 0), tileSize, spaceImage));
-		newBoard.getTrack().add(new Tile(new Point(0, 0), tileSize, spaceImage));
-		newBoard.getTrack().add(new Tile(new Point(0, tileSize), tileSize, spaceImage));
-		newBoard.getTrack().add(new Tile(new Point(0, tileSize * 2), tileSize, spaceImage));
-		newBoard.getTrack().add(new Tile(new Point(0, tileSize * 3), tileSize, spaceImage));
-		newBoard.getTrack().add(new Tile(new Point(tileSize, tileSize * 3), tileSize, spaceImage));
-		newBoard.getTrack().add(new Tile(new Point(tileSize * 2, tileSize * 3), tileSize, spaceImage));
-		newBoard.getTrack().add(new Tile(new Point(tileSize * 3, tileSize * 3), tileSize, spaceImage));
+		track.add(startTile);
+		track.add(new Tile(new Point(tileSize * 4, tileSize * 2), tileSize, spaceImage));
+		track.add(new Tile(new Point(tileSize * 4, tileSize * 1), tileSize, spaceImage));
+		track.add(new Tile(new Point(tileSize * 3, tileSize * 1), tileSize, spaceImage));
+		track.add(new Tile(new Point(tileSize * 2, tileSize * 1), tileSize, spaceImage));
+		track.add(new Tile(new Point(tileSize * 2, 0), tileSize, spaceImage));
+		track.add(new Tile(new Point(tileSize, 0), tileSize, spaceImage));
+		track.add(new Tile(new Point(0, 0), tileSize, spaceImage));
+		track.add(new Tile(new Point(0, tileSize), tileSize, spaceImage));
+		track.add(new Tile(new Point(0, tileSize * 2), tileSize, spaceImage));
+		track.add(new Tile(new Point(0, tileSize * 3), tileSize, spaceImage));
+		track.add(new Tile(new Point(tileSize, tileSize * 3), tileSize, spaceImage));
+		track.add(new Tile(new Point(tileSize * 2, tileSize * 3), tileSize, spaceImage));
+		track.add(new Tile(new Point(tileSize * 3, tileSize * 3), tileSize, spaceImage));
 
 		for (PlayingPiece piece : playingPieces) {
 			startTile.getPiecesOnTile().add(piece);
 		}
+		
+		return track;
 
-		return newBoard;
 	}
 
 	public void draw(Graphics g) {
@@ -119,6 +131,7 @@ public class BoardGame implements MouseListener, DieRollerListenerIF {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
+		System.out.println("BoardGame.mousePressed()");
 		if (!isMoving() && die.contains(e.getPoint())) {
 			die.roll();
 		}
